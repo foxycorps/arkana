@@ -1,0 +1,90 @@
+# Importing the STD
+import std from "./std.ts"
+import "./god.ts"
+
+project {
+    name "basic"
+}
+
+tasks {
+    # We want to clone a repo
+    "clone repo" {
+        std.file.delete("jungla-test")
+        std.git.clone("https://github.com/crazywolf132/Jungla", "./jungla-test")
+    }
+
+    "install deps" {
+        env {
+            cwd = "jungla-test"
+        }
+        command "npm install"
+    }
+
+    # now we are going to copy the `lerna.json` file
+    "duplicate lerna" {
+        env {
+            cwd = "jungla-test"
+        }
+        std.file.copy("./lerna.json", "./lerna.backup.js")
+    }
+
+    # now going to move the current one into the docs
+    "move lerna" {
+        env {
+            cwd = "jungla-test"
+        }
+        std.file.move("./lerna.json", "./docs/lerna.json")
+    }
+
+    "log if exists" {
+        env {
+            cwd = "jungla-test"
+        }
+
+        condition {
+            exists("./docs/lerna.json")
+        }
+
+        std.log("HELLO")
+    }
+
+    "delete file" {
+        env {
+            cwd = "jungla-test"
+        }
+
+        std.file.delete("./docs/lerna.json")
+    }
+
+    "log if exists 2" {
+        env {
+            cwd = "jungla-test"
+        }
+
+        condition {
+            exists("./docs/lerna.json")
+        }
+
+        std.log("ITS STILL HERE")
+    }
+
+    "MAKE RANDOM DIR" {
+        env {
+            LOCATION = std.env.get("DOG_NAME")
+        }
+
+        std.file.mkdir("./${LOCATION}")
+    }
+
+    "Make File" {
+        env {
+            cwd = std.env.get("DOG_NAME")
+        }
+
+        std.file.write("./theGod.txt", whoIs())
+    }
+}
+
+commands {
+    "exists" = "[[ -f ${1} ]]" # Check if a file exists.
+}

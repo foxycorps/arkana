@@ -1,0 +1,86 @@
+# Import the standard library for the language
+import std from "./std"
+
+# Define the project name
+project {
+    name "tst"
+}
+
+# Define the project tasks
+tasks {
+    # Clone the project repository and install dependencies
+    "git clone" {
+        git.clone("https://github.com/myusername/myrepo", "./someLocation")
+        command "yarn install"
+    }
+
+    # Move files from one location to another
+    "file move" {
+        file.move("./location1", "./location2")
+    }
+
+    # Execute JavaScript code
+    "js execute" {
+        env {
+            NODE_ENV = "production"  # Set the NODE_ENV environment variable
+        }
+
+        command {
+            js(```
+                const fs = require('fs');
+                (() => {
+                    fs.writeFileSync('./hello', 'world', 'utf8')  # Write to file
+                })();
+            ```)
+        }
+    }
+
+    # Check if a file exists and copy it
+    "copy file if exists" {
+        condition {
+            exists("./myfile.txt")  # Check if the file exists
+        }
+
+        command {
+            file.copy("./myfile.txt", "./copy.txt")  # Copy the file
+        }
+    }
+
+    # Run the full task
+    "full task" {
+        cloneAndInstall {
+            repo = "http://github.com/myusername/myrepo"  # Set the repository URL
+            location = "location"  # Set the location for the cloned repository
+            system = "yarn"  # Set the package manager to use
+        }
+    }
+}
+
+# Define the project templates (or blueprints)
+blueprints {
+    # Import the 'cloneAndInstall' template from a URL
+    "cloneAndInstall" = "https://mytemplates.com/templates/cloneAndInstall.ark"
+
+    # Build and deploy the project
+    "build_and_deploy" {
+        parameter "build_command", default: "npm run build"  # Define the build command parameter
+        parameter "docker_image_name", default: "my-image"  # Define the Docker image name parameter
+        parameter "deployment_file_path", default: "./deployment.yaml"  # Define the deployment file path parameter
+
+        "build" {
+            shell.run(var.build_command)  # Run the build command
+            docker.build("${var.docker_image_name}", "${var.docker_file_path}")  # Build the Docker image
+            docker.push("${var.docker_image_name}")  # Push the Docker image to the registry
+        }
+
+        "deploy" {
+            kubectl.apply("${var.deployment_file_path}")  # Deploy to Kubernetes
+        }
+    }
+}
+
+# Define the project commands
+commands {
+    "exists" = "[[ -f ${1} ]]"  # Check if a file exists
+    "envVarSet" = "[[ ${1} = ${2} ]]"  # Check if an environment variable is set to a specific value
+}
