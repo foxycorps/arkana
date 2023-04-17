@@ -1,7 +1,6 @@
 import { readFileSync } from "fs-extra";
 import { execSync } from "node:child_process";
-import { executeCommand } from "utils/command";
-import { execute } from "utils/execute";
+import { executeCommand, execute } from "../utils";
 
 type Dict<T> = {
     [key: string]: T

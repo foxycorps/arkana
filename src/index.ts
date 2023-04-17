@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 // @ts-ignore -- We know that `description` is there.
 import { name, description, version } from '../package.json'
-import { readFile } from 'utils';
+import { readFile } from './utils';
 import Arkana from './language'
 
 const program = new Command();
