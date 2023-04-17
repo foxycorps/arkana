@@ -42,13 +42,16 @@ export default class Interpreter {
 
     constructor(private obj: any) { }
 
-    interpret() {
+    interpret(dryRun: boolean) {
 
         // We will start by reading the dependencies
         this.readImports();
         this.loadCommands();
         this.loadBlueprints();
-        console.log(this.library)
+
+        if (!dryRun) {
+            this.executeTasks();
+        }
     }
 
     executeTasks() {
