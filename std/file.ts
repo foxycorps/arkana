@@ -14,6 +14,13 @@ export const del = (env: any, location: string): void => {
     })
 }
 
+export const delDir = (env: any, location: string): void => {
+    execSync(`rm -rf ${location}`, {
+        cwd: env.cwd,
+        env
+    })
+}
+
 export const mkdir = (env: any, location: string): void => {
     execSync(`mkdir -p ${location}`, {
         cwd: env.cwd,
