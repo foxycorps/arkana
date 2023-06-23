@@ -170,7 +170,7 @@ export default class Interpreter {
                 // We will check to see if the url has `http` in it.
                 // If it does, we will do a node-fetch for the import data...
                 // otherwise we will read the file.
-                if (String(imp).includes("http")) {
+                if (String(imp).startsWith('http://') || String(imp).startsWith('https://')) {
                     // It is an actual URL so we will do a node-fetch for the import.
                     fetch(String(imp), { method: "GET" }).then((res) => res.text()).then((res) => {
                         const result = execute(res);
@@ -183,6 +183,20 @@ export default class Interpreter {
                         }
                         this.library.set(impName, result);
                     })
+                } else if (String(imp).startsWith("ARKANA:")) {
+                    // This means we are using the WEB std.
+                    fetch(`https://raw.githubusercontent.com/foxycorps/arkana/main/std/${imp}.ts`, { method: "GET" }).then((res) => res.text())
+                        .then((res) => {
+                            const result = execute(res);
+                            if (impName.startsWith('--') && impName.endsWith('--')) {
+                                // This means its a blind import.
+                                for (const [k, v] of Object.entries(result)) {
+                                    this.library.set(k, v);
+                                }
+                                return;
+                            }
+                            this.library.set(impName, result);
+                        })
                 } else {
                     // We are reading the file from local.
                     const fileContents = readFileSync(String(imp), 'utf8');
