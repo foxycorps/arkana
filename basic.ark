@@ -1,6 +1,7 @@
 # Importing the STD
-import std from "./std.ts"
-import "./god.ts"
+import file from "ARKANA:file"
+import git from "ARKANA:git"
+import log from "ARKANA:log"
 
 project {
     name "basic"
