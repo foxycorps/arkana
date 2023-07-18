@@ -41,3 +41,17 @@ export const move = (env: any, location1: string, location2: string): void => {
         env
     })
 }
+
+// Shell command to see if a folder exists
+export const existsDir = (env: any, location: string): boolean => {
+    try {
+        // Barbaric way of doing it... but it should work
+        execSync(`cd ${location}`, {
+            cwd: env.cwd,
+            env
+        })
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
